@@ -6,6 +6,8 @@ Rails.application.routes.draw do
       get "users/me", to: "users#me"
       resources :categories, only: [:index, :show]
       resources :expenses
+      post "news_articles/crawl", to: "news_articles#crawl"
+      resources :news_articles, only: [:index, :show]
       get "summaries/monthly", to: "summaries#monthly"
       get "summaries/categories", to: "summaries#categories"
     end

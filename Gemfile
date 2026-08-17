@@ -8,6 +8,7 @@ gem "puma", ">= 5.0"
 gem "bcrypt", "~> 3.1"
 gem "jwt", "~> 2.8"
 gem "rack-cors"
+gem "nokogiri", "~> 1.16"
 gem "bootsnap", require: false
 
 group :development, :test do
