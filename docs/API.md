@@ -34,6 +34,12 @@ GET /api/v1/expenses?category_id=1&date=2026-01-05&search=coffee&page=1&per_page
 
 All expense operations are scoped to the bearer-token user. An expense belonging to another user behaves as not found.
 
+## News articles
+
+`GET /news_articles` returns stored articles with `source`, `title`, `url`, `published_at`, and `content`. Filter by `source=openai`, `source=google_deepmind`, or `source=anthropic`; pagination uses `page` and `per_page` (maximum 100). `GET /news_articles/:id` returns one article.
+
+`POST /news_articles/crawl` queues `CrawlNewsJob` and returns `202` immediately. The job crawls the official OpenAI, Google DeepMind, and Anthropic news pages and upserts records by URL.
+
 ## Summaries
 
 `GET /summaries/monthly?month=2026-01` returns `total_amount_cents`, `currency`, and `expense_count`.

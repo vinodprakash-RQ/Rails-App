@@ -44,6 +44,9 @@ All endpoints are prefixed with `/api/v1`.
 | GET/PATCH/PUT/DELETE | `/expenses/:id` | Yes | Read or modify own expense |
 | GET | `/summaries/monthly?month=2026-01` | Yes | Monthly total |
 | GET | `/summaries/categories?month=2026-01` | Yes | Category breakdown |
+| GET | `/news_articles` | Yes | List collected AI news |
+| GET | `/news_articles/:id` | Yes | Show a collected article |
+| POST | `/news_articles/crawl` | Yes | Queue a background crawl |
 
 Expense amounts use `amount_cents` (for example, `$12.50` is `1250`). List filters include `category_id`, `date` (`YYYY-MM-DD`), and `search`; sorting accepts `sort=spent_on|amount_cents|description|created_at` and `direction=asc|desc`. Pagination accepts `page` and `per_page` (maximum 100).
 
