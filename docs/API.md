@@ -38,7 +38,7 @@ All expense operations are scoped to the bearer-token user. An expense belonging
 
 `GET /news_articles` returns stored articles with `source`, `title`, `url`, `published_at`, and `content`. Filter by `source=openai`, `source=google_deepmind`, or `source=anthropic`; pagination uses `page` and `per_page` (maximum 100). `GET /news_articles/:id` returns one article.
 
-`POST /news_articles/crawl` queues `CrawlNewsJob` and returns `202` immediately. The job crawls the official OpenAI, Google DeepMind, and Anthropic news pages and upserts records by URL.
+`POST /news_articles/crawl` queues `CrawlNewsJob` and returns `202` immediately. It requires both the user bearer token and the internal `X-Crawler-Token` header containing `CRAWL_TRIGGER_TOKEN`. The job crawls the official OpenAI, Google DeepMind, and Anthropic news pages and upserts records by URL.
 
 ## Summaries
 

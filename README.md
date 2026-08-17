@@ -54,4 +54,4 @@ Responses use `{ "data": ... }`; paginated lists also include `{ "meta": ... }`.
 
 ## Security and operations
 
-JWTs are signed with `SECRET_KEY_BASE` and expire after 24 hours. All expense reads and writes begin from `current_user.expenses`, preventing IDOR access. Strong parameters, SQL-like escaping, allow-listed sorting, foreign keys, unique indexes, and database amount checks protect data integrity. Production should additionally terminate TLS at the edge, restrict `CORS_ORIGINS` to trusted origins, use managed secret storage, and add rate limiting/observability at the gateway.
+JWTs are signed with `SECRET_KEY_BASE` and expire after 24 hours. All expense reads and writes begin from `current_user.expenses`, preventing IDOR access. The crawl trigger additionally requires the separately managed `CRAWL_TRIGGER_TOKEN` header. Strong parameters, SQL-like escaping, allow-listed sorting, foreign keys, unique indexes, and database amount checks protect data integrity. Production should additionally terminate TLS at the edge, restrict `CORS_ORIGINS` to trusted origins, use managed secret storage, and add rate limiting/observability at the gateway.

@@ -15,9 +15,10 @@ The authenticated API endpoint queues a crawl and returns immediately:
 ```http
 POST /api/v1/news_articles/crawl
 Authorization: Bearer <token>
+X-Crawler-Token: <CRAWL_TRIGGER_TOKEN>
 ```
 
-For scheduled operation, invoke `CrawlNewsJob.perform_later` from the deployment scheduler. Rails' default async adapter is suitable for development; production should configure a durable Active Job adapter such as Solid Queue or Sidekiq.
+The endpoint requires both a valid user token and the separately configured `CRAWL_TRIGGER_TOKEN`. Requests without the internal token are rejected with `401`; the token is compared using a constant-time comparison. For scheduled operation, invoke `CrawlNewsJob.perform_later` from the deployment scheduler. Rails' default async adapter is suitable for development; production should configure a durable Active Job adapter such as Solid Queue or Sidekiq.
 
 ## View articles
 

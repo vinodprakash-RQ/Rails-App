@@ -22,6 +22,19 @@ class ApiV1Test < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
+  test "rejects malformed, expired, and incorrectly signed tokens" do
+    get "/api/v1/users/me", headers: auth_headers("not-a-jwt")
+    assert_response :unauthorized
+
+    expired = JWT.encode({ sub: @user.id, exp: 1.minute.ago.to_i }, Rails.application.secret_key_base, "HS256")
+    get "/api/v1/users/me", headers: auth_headers(expired)
+    assert_response :unauthorized
+
+    wrong_signature = JWT.encode({ sub: @user.id, exp: 1.hour.from_now.to_i }, "wrong-secret", "HS256")
+    get "/api/v1/users/me", headers: auth_headers(wrong_signature)
+    assert_response :unauthorized
+  end
+
   test "prevents IDOR and supports filters and pagination" do
     owner_token = JWT.encode({ sub: @user.id, exp: 1.hour.from_now.to_i }, Rails.application.secret_key_base, "HS256")
     expense = @user.expenses.create!(category: @category, amount_cents: 2500, description: "Coffee", spent_on: Date.new(2026, 1, 5))

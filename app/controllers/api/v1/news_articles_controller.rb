@@ -2,6 +2,7 @@ module Api
   module V1
     class NewsArticlesController < ApplicationController
       before_action :authenticate_user!
+      before_action :authorize_crawl!, only: :crawl
       before_action :set_article, only: :show
 
       def index
@@ -28,6 +29,15 @@ module Api
       end
 
       private
+
+      def authorize_crawl!
+        configured_token = ENV["CRAWL_TRIGGER_TOKEN"].to_s
+        supplied_token = request.headers["X-Crawler-Token"].to_s
+        valid = configured_token.present? && supplied_token.bytesize == configured_token.bytesize && ActiveSupport::SecurityUtils.secure_compare(supplied_token, configured_token)
+        return if valid
+
+        render json: { error: { code: "unauthorized", message: "A valid crawler token is required" } }, status: :unauthorized
+      end
 
       def set_article
         @article = NewsArticle.find(params[:id])

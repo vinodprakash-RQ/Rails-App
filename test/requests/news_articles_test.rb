@@ -14,11 +14,27 @@ class NewsArticlesTest < ActionDispatch::IntegrationTest
     assert_equal ["openai"], json["data"].map { |article| article["source"] }
   end
 
-  test "queues crawling without doing network work in the request" do
+  test "rejects crawl requests without the internal crawler token" do
     CrawlNewsJob.stub(:perform_later, true) do
-      post "/api/v1/news_articles/crawl", headers: auth_headers(@token)
+      post "/api/v1/news_articles/crawl", headers: auth_headers(@token).merge("X-Crawler-Token" => "wrong-token")
+    end
+    assert_response :unauthorized
+  end
+
+  test "queues crawling with the internal crawler token" do
+    previous_token = ENV["CRAWL_TRIGGER_TOKEN"]
+    ENV["CRAWL_TRIGGER_TOKEN"] = "test-crawler-token"
+    CrawlNewsJob.stub(:perform_later, true) do
+      post "/api/v1/news_articles/crawl", headers: auth_headers(@token).merge("X-Crawler-Token" => "test-crawler-token")
     end
     assert_response :accepted
     assert_equal "queued", json.dig("data", "status")
+  ensure
+    ENV["CRAWL_TRIGGER_TOKEN"] = previous_token
+  end
+
+  test "rejects invalid source filters" do
+    get "/api/v1/news_articles", params: { source: "unknown" }, headers: auth_headers(@token)
+    assert_response :bad_request
   end
 end
